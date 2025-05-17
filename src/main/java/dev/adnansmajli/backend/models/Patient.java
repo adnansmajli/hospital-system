@@ -30,7 +30,7 @@ public class Patient {
     private String city;
     private String country;
     private String notes;
-    private char gender;
+    private String gender;
     private LocalDate birthDate;
     private boolean active;
     private String photo;

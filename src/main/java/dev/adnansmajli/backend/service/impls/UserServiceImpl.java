@@ -7,6 +7,7 @@ import dev.adnansmajli.backend.exeption.UserNameExistException;
 import dev.adnansmajli.backend.exeption.UserNotFoundException;
 import dev.adnansmajli.backend.exeption.WrongPasswordException;
 import dev.adnansmajli.backend.mappers.UserMapper;
+
 import dev.adnansmajli.backend.models.User;
 import dev.adnansmajli.backend.repositories.UserRepository;
 import dev.adnansmajli.backend.service.UserService;
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto register(UserRegistrationRequestDto userRegDto) {
-        User user = userMapper.fromUserRegistrationDto(userRegDto);
+        User user = userMapper.fromUserRegistrationRequestDto(userRegDto);
 
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new UserNameExistException();

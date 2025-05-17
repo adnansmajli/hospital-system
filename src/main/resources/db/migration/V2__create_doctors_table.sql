@@ -8,7 +8,7 @@ CREATE TABLE doctors
     email          VARCHAR(255) NOT NULL UNIQUE,
     phone_number   VARCHAR(255),
     address        VARCHAR(255),
-    gender         CHAR(1)      NOT NULL,
+    gender         VARCHAR(255)     NOT NULL,
     birth_date     DATE,
     active         BOOLEAN      NOT NULL,
     photo          VARCHAR(255),

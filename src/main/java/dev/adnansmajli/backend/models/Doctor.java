@@ -39,7 +39,7 @@ public class Doctor {
     private String address;
 
     @Column(nullable = false)
-    private char gender;
+    private String gender;
 
     private LocalDate birthDate;
 

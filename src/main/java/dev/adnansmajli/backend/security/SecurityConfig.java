@@ -23,21 +23,18 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 // make the app stateless—no HTTP session
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            //    .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                                // 1) allow anyone to hit /api/auth/**
-                                .requestMatchers("/api/auth/**").permitAll()
-                                // 2) everything else under /api/** requires a valid JWT
-                                .requestMatchers("/api/**").authenticated()
+                                .anyRequest().permitAll()
                         // (you could add .anyRequest().permitAll() if you have non-API URLs)
-                )
-                // register your Dao auth provider
-                .authenticationProvider(daoAuthProvider())
-                // put the JWT filter before Spring’s username/password filter
-                .addFilterBefore(
-                        new JwtAuthFilter(jwtUtils, userDetailsService),
-                        UsernamePasswordAuthenticationFilter.class
                 );
+                // register your Dao auth provider
+//                .authenticationProvider(daoAuthProvider())
+//                // put the JWT filter before Spring’s username/password filter
+//                .addFilterBefore(
+//                        new JwtAuthFilter(jwtUtils, userDetailsService),
+//                        UsernamePasswordAuthenticationFilter.class
+//                );
 
         return http.build();
     }

@@ -18,7 +18,7 @@ public class DoctorDto {
     private String email;
     private String phoneNumber;
     private String address;
-    private char gender;
+    private String gender;
     private LocalDate birthDate;
     private boolean active;
     private String photo;

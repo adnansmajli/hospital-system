@@ -4,11 +4,12 @@ import dev.adnansmajli.backend.dtos.DoctorDto;
 import dev.adnansmajli.backend.models.Doctor;
 import dev.adnansmajli.backend.mappers.DoctorMapper;
 import dev.adnansmajli.backend.service.DoctorService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.persistence.EntityNotFoundException;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,16 +43,18 @@ public class DoctorController {
         }
     }
 
+
     @PostMapping
-    public ResponseEntity<DoctorDto> create(@RequestBody DoctorDto dto) {
+    public ResponseEntity<DoctorDto> create(@Valid @RequestBody DoctorDto dto) {
         Doctor created = doctorService.add(doctorMapper.toEntity(dto));
-        return ResponseEntity.created(URI.create("/api/doctors/" + created.getId()))
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
                 .body(doctorMapper.toDto(created));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<DoctorDto> update(@PathVariable Long id,
-                                            @RequestBody DoctorDto dto) {
+                                            @Valid @RequestBody DoctorDto dto) {
         try {
             Doctor updated = doctorService.modify(id, doctorMapper.toEntity(dto));
             return ResponseEntity.ok(doctorMapper.toDto(updated));

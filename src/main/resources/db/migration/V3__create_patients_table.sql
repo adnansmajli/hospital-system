@@ -10,7 +10,7 @@ CREATE TABLE patients
     city         VARCHAR(255),
     country      VARCHAR(255),
     notes        VARCHAR(255),
-    gender       CHAR(1),
+    gender       varchar(255),
     birth_date   DATE,
     active       BOOLEAN,
     photo        VARCHAR(255),
