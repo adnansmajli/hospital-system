@@ -1,6 +1,8 @@
 package dev.adnansmajli.backend.service;
 
 import dev.adnansmajli.backend.dtos.LoginRequestDto;
+import dev.adnansmajli.backend.dtos.RegisterRequestDto;
+import dev.adnansmajli.backend.dtos.UserDto;
 import dev.adnansmajli.backend.models.User;
 
 public interface AuthService {
@@ -13,4 +15,6 @@ public interface AuthService {
      * Look up the User entity by username (for mapping back to UserDto).
      */
     User getUserDetails(String username);
+
+    UserDto register(RegisterRequestDto signUpRequest) throws Exception;
 }

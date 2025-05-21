@@ -1,5 +1,6 @@
 package dev.adnansmajli.backend.mappers;
 
+import dev.adnansmajli.backend.dtos.RegisterRequestDto;
 import dev.adnansmajli.backend.dtos.UserDto;
 import dev.adnansmajli.backend.dtos.UserRegistrationRequestDto;
 import dev.adnansmajli.backend.models.User;
@@ -19,6 +20,22 @@ public class UserMapperImpl implements UserMapper {
         u.setRole(reg.getRole());
         u.setEmail(reg.getEmail());
         u.setPhone(reg.getPhone());
+        return u;
+    }
+
+    @Override
+    public User toEntity(RegisterRequestDto dto) {
+        if (dto == null) {
+            return null;
+        }
+        User u = new User();
+        u.setUsername(dto.getUsername());
+        u.setName(dto.getName());     // map your “name” field
+        u.setSurname(dto.getSurname());  // map “surname”
+        u.setRole(dto.getRole());     // map “role”
+        u.setEmail(dto.getEmail());
+        u.setPhone(dto.getPhone());    // map “phone”
+        // leave password out here—your service will encode & set it
         return u;
     }
 

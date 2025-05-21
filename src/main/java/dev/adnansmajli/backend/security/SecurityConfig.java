@@ -1,9 +1,9 @@
-// src/main/java/dev/adnansmajli/backend/security/SecurityConfig.java
 package dev.adnansmajli.backend.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.*;
-import org.springframework.security.authentication.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,24 +21,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // no CSRF since we use JWT
                 .csrf(csrf -> csrf.disable())
-                // make the app stateless—no HTTP session
-            //    .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // no sessions; each request must carry JWT
+                .sessionManagement(sm -> sm
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
+                // authorization rules
                 .authorizeHttpRequests(auth -> auth
-                                .anyRequest().permitAll()
-                        // (you could add .anyRequest().permitAll() if you have non-API URLs)
+                        // public endpoints
+                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        // everything else needs authentication
+                        .anyRequest().authenticated()
+                )
+
+                // authentication provider (DAO + BCrypt)
+                .authenticationProvider(daoAuthProvider())
+
+                // register JWT filter before username/password filter
+                .addFilterBefore(
+                        new JwtAuthFilter(jwtUtils, userDetailsService),
+                        UsernamePasswordAuthenticationFilter.class
                 );
-                // register your Dao auth provider
-//                .authenticationProvider(daoAuthProvider())
-//                // put the JWT filter before Spring’s username/password filter
-//                .addFilterBefore(
-//                        new JwtAuthFilter(jwtUtils, userDetailsService),
-//                        UsernamePasswordAuthenticationFilter.class
-//                );
 
         return http.build();
     }
-
 
     @Bean
     public DaoAuthenticationProvider daoAuthProvider() {
