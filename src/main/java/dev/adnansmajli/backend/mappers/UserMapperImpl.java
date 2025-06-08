@@ -3,6 +3,7 @@ package dev.adnansmajli.backend.mappers;
 import dev.adnansmajli.backend.dtos.RegisterRequestDto;
 import dev.adnansmajli.backend.dtos.UserDto;
 import dev.adnansmajli.backend.dtos.UserRegistrationRequestDto;
+import dev.adnansmajli.backend.models.Role;
 import dev.adnansmajli.backend.models.User;
 import org.springframework.stereotype.Component;
 
@@ -47,7 +48,7 @@ public class UserMapperImpl implements UserMapper {
         u.setUsername(userDto.getUsername());
         u.setName(userDto.getName());
         u.setSurname(userDto.getSurname());
-        u.setRole(userDto.getRole());
+        u.setRole(Role.valueOf(userDto.getRole()));
         u.setEmail(userDto.getEmail());
         u.setPhone(userDto.getPhone());
         return u;
@@ -61,7 +62,7 @@ public class UserMapperImpl implements UserMapper {
         dto.setUsername(user.getUsername());
         dto.setName(user.getName());
         dto.setSurname(user.getSurname());
-        dto.setRole(user.getRole());
+        dto.setRole(String.valueOf(user.getRole()));
         dto.setEmail(user.getEmail());
         dto.setPhone(user.getPhone());
         return dto;

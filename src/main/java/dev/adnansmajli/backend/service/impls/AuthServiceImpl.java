@@ -4,13 +4,13 @@ import dev.adnansmajli.backend.dtos.LoginRequestDto;
 import dev.adnansmajli.backend.dtos.RegisterRequestDto;
 import dev.adnansmajli.backend.dtos.UserDto;
 import dev.adnansmajli.backend.mappers.UserMapper;
+import dev.adnansmajli.backend.models.Role;
 import dev.adnansmajli.backend.models.User;
 import dev.adnansmajli.backend.repositories.UserRepository;
 import dev.adnansmajli.backend.security.JwtUtils;
 import dev.adnansmajli.backend.service.AuthService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +24,6 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;      // ← add
     private final UserMapper userMapper;
-
 
 
     @Override
@@ -46,18 +45,17 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserDto register(RegisterRequestDto dto) throws Exception {
-        if (userRepository.existsByUsername(dto.getUsername())) {
-            throw new BadRequestException("Username already taken");
-        }
-        if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new BadRequestException("Email already in use");
-        }
+    public UserDto register(RegisterRequestDto request) {
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setName(request.getName());
+        user.setSurname(request.getSurname());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        user.setRole(request.getRole() != null ? request.getRole() : Role.USER);
 
-
-        User user = userMapper.toEntity(dto);
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        User saved = userRepository.save(user);
-        return userMapper.toDto(saved);
+        User savedUser = userRepository.save(user);
+        return userMapper.toDto(savedUser);
     }
 }

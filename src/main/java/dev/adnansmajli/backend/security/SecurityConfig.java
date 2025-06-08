@@ -27,24 +27,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1) Enable CORS support
                 .cors().and()
-
-                // 2) Disable CSRF (we’re a stateless REST API)
                 .csrf(csrf -> csrf.disable())
-
-                // 3) No sessions: we use JWT stateless tokens
                 .sessionManagement(sm -> sm
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
-                // 4) Public endpoints
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/auth/me").authenticated()
                         .anyRequest().authenticated()
                 )
-
-                // 5) Our DAO auth + JWT filter
                 .authenticationProvider(daoAuthProvider())
                 .addFilterBefore(
                         new JwtAuthFilter(jwtUtils, userDetailsService),
@@ -53,6 +46,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public DaoAuthenticationProvider daoAuthProvider() {

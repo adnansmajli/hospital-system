@@ -29,28 +29,13 @@ public class User {
     @Column(length = 50, nullable = false)
     private String surname;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 10, nullable = false)
-    private String role;
+    private Role role = Role.USER; // Default role is USER
 
     @Column(length = 50, nullable = false, unique = true)
     private String email;
 
     @Column(length = 20, nullable = false)
     private String phone;
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

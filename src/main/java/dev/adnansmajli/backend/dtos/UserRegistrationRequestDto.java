@@ -1,6 +1,7 @@
 package dev.adnansmajli.backend.dtos;
 
 
+import dev.adnansmajli.backend.models.Role;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,7 +39,7 @@ public class UserRegistrationRequestDto {
 
     @Size(min = 3, max = 10, message = "Role must be 10 characters long")
     @NotBlank(message = "Role is not provided, blank or empty")
-    private String role = "ROLE_USER"; //Role.USER
+    private Role role = Role.USER;
 
     @Size(min = 5, max = 50, message = "Email must be between 5 and 50 characters long")
     @NotBlank(message = "Email is not provided, blank or empty")
