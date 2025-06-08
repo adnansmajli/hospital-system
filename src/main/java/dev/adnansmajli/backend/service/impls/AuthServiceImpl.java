@@ -13,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,15 +29,21 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String authenticateAndGetToken(LoginRequestDto loginRequest) {
-        // throws if auth fails
-        authManager.authenticate(
+        // This returns Authentication, not void:
+        Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
                         loginRequest.getPassword()
                 )
         );
-        return jwtUtils.generateToken(loginRequest.getUsername());
+
+//        // (optional) put it in SecurityContext if you need it later
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Pass the Authentication into your new token method:
+        return jwtUtils.generateToken(authentication);
     }
+
 
     @Override
     public User getUserDetails(String username) {

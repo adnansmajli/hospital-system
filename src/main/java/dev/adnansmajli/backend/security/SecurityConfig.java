@@ -29,13 +29,40 @@ public class SecurityConfig {
         http
                 .cors().and()
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(sm -> sm
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement(sm ->
+                        sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+//                .authorizeHttpRequests(auth -> auth
+//                        // public
+//                        .requestMatchers("/api/auth/register", "/api/auth/login")
+//                        .permitAll()
+//
+//                        // admin-only paths
+//                        .requestMatchers("/api/admin/**")
+//                        .hasRole("ADMIN")
+//
+//                        .requestMatchers(HttpMethod.POST, "/api/doctors/**")
+//                        .hasRole("ADMIN")
+//
+//
+//                        // everyone logged in can read doctors
+//                        .requestMatchers(HttpMethod.GET, "/api/doctors/**")
+//                        .authenticated()
+//
+//                        // user profile endpoint
+//                        .requestMatchers("/api/auth/me")
+//                        .authenticated()
+//
+//                        // everything else
+//                        .anyRequest()
+//                        .authenticated()
+//
+//                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/auth/me").authenticated()
+                        // public
+                        .requestMatchers("/api/auth/register", "/api/auth/login")
+                        .permitAll()
+                        .requestMatchers("/api/doctors/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(daoAuthProvider())

@@ -6,6 +6,7 @@ import dev.adnansmajli.backend.mappers.DoctorMapper;
 import dev.adnansmajli.backend.service.DoctorService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+
+@Slf4j
 @RestController
 @RequestMapping("/api/doctors")
 public class DoctorController {
@@ -46,6 +50,7 @@ public class DoctorController {
 
     @PostMapping
     public ResponseEntity<DoctorDto> create(@Valid @RequestBody DoctorDto dto) {
+        log.info("DTO coming from client → {}", dto);
         Doctor created = doctorService.add(doctorMapper.toEntity(dto));
         return ResponseEntity
                 .status(HttpStatus.CREATED)

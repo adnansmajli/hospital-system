@@ -4,10 +4,13 @@ package dev.adnansmajli.backend.service.impls;
 import dev.adnansmajli.backend.models.Doctor;
 import dev.adnansmajli.backend.repositories.DoctorRepository;
 import dev.adnansmajli.backend.service.DoctorService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
+@Slf4j
 @Service
 public class DoctorServiceImpl implements DoctorService {
 
@@ -29,6 +32,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public Doctor add(Doctor doctor) {
+        log.info("Entity received by service → {}", doctor);   //
         // Check if doctor has an id. If it does, ensure it's not already in use.
         if (doctor.getId() != null) {
             var existingDoctor = findById(doctor.getId());
