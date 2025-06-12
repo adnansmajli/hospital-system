@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,22 +28,28 @@ public class AdminController {
     private final DoctorMapper doctorMapper;
     private final AppointmentMapper appointmentMapper;
 
-    // Logins (replace with real login log if you have it)
+    // Logins  – renditur sipas orës së fundit
     @GetMapping("/logins")
-    public ResponseEntity<List<UserDto>> getLogins() {
-        return ResponseEntity.ok(
-                adminService.getAllUsers()
-        );
+    public List<UserDto> getLogins() {
+        return adminService.getAllUsers().stream()
+                .sorted(Comparator.comparing(UserDto::getLastLoginAt,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
+                .collect(Collectors.toList());
     }
 
-    // Signups (replace with real signup data if you have it)
     @GetMapping("/signups")
     public ResponseEntity<List<UserDto>> getSignups() {
-        return ResponseEntity.ok(
-                adminService.getAllUsers()
-        );
-    }
+        Comparator<UserDto> byCreatedAtDesc =
+                Comparator.comparing(UserDto::getCreatedAt,
+                        Comparator.nullsLast(Comparator.reverseOrder()));
 
+        List<UserDto> signups = adminService.getAllUsers()      // already returns all users
+                .stream()
+                .sorted(byCreatedAtDesc)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(signups);
+    }
     // Appointments
     @GetMapping("/appointments")
     public ResponseEntity<List<AppointmentDto>> getAllAppointments() {

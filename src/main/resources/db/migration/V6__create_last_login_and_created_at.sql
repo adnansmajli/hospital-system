@@ -1,0 +1,3 @@
+ALTER TABLE users
+    ADD COLUMN created_at TIMESTAMP NOT NULL DEFAULT now(),
+  ADD COLUMN last_login_at  TIMESTAMP;

@@ -17,52 +17,73 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+
     private final AuthenticationManager authManager;
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;      // ← add
+    private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-
+    /* ------------------------------------------------------------------ */
+    /*  LOGIN                                                             */
+    /* ------------------------------------------------------------------ */
     @Override
     public String authenticateAndGetToken(LoginRequestDto loginRequest) {
-        // This returns Authentication, not void:
+
+        // 1) krijo Authentication (për Spring Security)
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
+                        loginRequest.getPassword())
         );
 
-//        // (optional) put it in SecurityContext if you need it later
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // 2) përditëso lastLoginAt
+        User user = userRepository
+                .findByUsername(loginRequest.getUsername())
+                .orElseThrow();                       // duhet ekzistojë në këtë pikë
 
-        // Pass the Authentication into your new token method:
+        user.setLastLoginAt(LocalDateTime.now());
+        userRepository.save(user);                   // RUANI ndryshimin
+
+        // 3) krijo JWT me objektin Authentication
         return jwtUtils.generateToken(authentication);
     }
 
-
+    /* ------------------------------------------------------------------ */
+    /*  REGISTER                                                          */
+    /* ------------------------------------------------------------------ */
     @Override
-    public User getUserDetails(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
+    public UserDto register(RegisterRequestDto req) {
+
+        User user = new User();
+        user.setUsername(req.getUsername());
+        user.setPassword(passwordEncoder.encode(req.getPassword()));
+        user.setName(req.getName());
+        user.setSurname(req.getSurname());
+        user.setEmail(req.getEmail());
+        user.setPhone(req.getPhone());
+        user.setRole(req.getRole() != null ? req.getRole() : Role.USER);
+
+        user.setCreatedAt(LocalDateTime.now());      // ➜ krijimi
+        user.setLastLoginAt(null);                   // do plotësohet në login-in e parë
+
+        User saved = userRepository.save(user);
+        return userMapper.toDto(saved);
     }
 
+    /* ------------------------------------------------------------------ */
+    /*  HELPERS                                                           */
+    /* ------------------------------------------------------------------ */
     @Override
-    public UserDto register(RegisterRequestDto request) {
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setName(request.getName());
-        user.setSurname(request.getSurname());
-        user.setEmail(request.getEmail());
-        user.setPhone(request.getPhone());
-        user.setRole(request.getRole() != null ? request.getRole() : Role.USER);
-
-        User savedUser = userRepository.save(user);
-        return userMapper.toDto(savedUser);
+    public User getUserDetails(String username) {
+        return userRepository
+                .findByUsername(username)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("User not found: " + username));
     }
 }

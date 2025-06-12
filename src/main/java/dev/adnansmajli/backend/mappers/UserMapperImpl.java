@@ -7,6 +7,8 @@ import dev.adnansmajli.backend.models.Role;
 import dev.adnansmajli.backend.models.User;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class UserMapperImpl implements UserMapper {
 
@@ -21,6 +23,7 @@ public class UserMapperImpl implements UserMapper {
         u.setRole(reg.getRole());
         u.setEmail(reg.getEmail());
         u.setPhone(reg.getPhone());
+        u.setCreatedAt(LocalDateTime.now());
         return u;
     }
 
@@ -51,6 +54,8 @@ public class UserMapperImpl implements UserMapper {
         u.setRole(Role.valueOf(userDto.getRole()));
         u.setEmail(userDto.getEmail());
         u.setPhone(userDto.getPhone());
+        u.setCreatedAt(userDto.getCreatedAt());
+        u.setLastLoginAt(userDto.getLastLoginAt());
         return u;
     }
 
@@ -65,6 +70,8 @@ public class UserMapperImpl implements UserMapper {
         dto.setRole(String.valueOf(user.getRole()));
         dto.setEmail(user.getEmail());
         dto.setPhone(user.getPhone());
+        dto.setCreatedAt(user.getCreatedAt());
+        dto.setLastLoginAt(user.getLastLoginAt());
         return dto;
     }
 }
